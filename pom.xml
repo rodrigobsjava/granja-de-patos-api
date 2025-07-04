@@ -107,6 +107,20 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Hibernate Validator com suporte a @CPF, @CNPJ -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		
+		<!-- Para @CPF, @CNPJ da Bean Validation brasileira -->
+		<dependency>
+			<groupId>br.com.caelum.stella</groupId>
+			<artifactId>caelum-stella-bean-validation</artifactId>
+			<version>2.1.6</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -21,9 +21,9 @@ public class Cliente {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
-	
+
 	private String nome;
-	
-	@Column(name = "tem_desconto")
+
+	@Column(name = "tem_desconto", nullable = false)
 	private boolean elegivelDesconto;
 }
