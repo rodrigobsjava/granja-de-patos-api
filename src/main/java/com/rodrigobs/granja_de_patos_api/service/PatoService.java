@@ -6,39 +6,50 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.rodrigobs.granja_de_patos_api.dto.requests.PatoRequestDTO;
+import com.rodrigobs.granja_de_patos_api.exception.NotFoundException;
 import com.rodrigobs.granja_de_patos_api.model.Pato;
 import com.rodrigobs.granja_de_patos_api.repository.PatoRepository;
 
 @Service
 public class PatoService {
 
-	@Autowired
-	private PatoRepository patoRepository;
+    @Autowired
+    private PatoRepository patoRepository;
 
-	public List<Pato> findAll() {
-		return patoRepository.findAll();
-	}
+    public List<Pato> findAll() {
+        return patoRepository.findAll();
+    }
 
-	public Pato findById(UUID id) {
-		return patoRepository.findById(id).orElseThrow(() -> new RuntimeException("Pato não encontrado"));
-	}
+    public Pato findById(UUID id) {
+        return patoRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Pato não encontrado"));
+    }
 
-	public Pato create(Pato pato) {
-		return patoRepository.save(pato);
-	}
+    public Pato create(PatoRequestDTO dto) {
+        Pato pato = new Pato();
+        pato.setNome(dto.getNome());
+        pato.setPataMae(dto.getPataMaeId() != null ? findById(dto.getPataMaeId()) : null);
+        pato.setVendido(false);
+        return patoRepository.save(pato);
+    }
 
-	public Pato update(UUID id, Pato patoAtualizado) {
-		Pato existente = findById(id);
-		existente.setNome(patoAtualizado.getNome());
-		existente.setPataMae(patoAtualizado.getPataMae());
-		return patoRepository.save(existente);
-	}
+    public Pato save(Pato pato) {
+        return patoRepository.save(pato);
+    }
 
-	public void delete(UUID id) {
-		if (!patoRepository.existsById(id)) {
-			throw new RuntimeException("Pato não encontrado");
-		}
-		patoRepository.deleteById(id);
-	}
+    public Pato update(UUID id, PatoRequestDTO dto) {
+        Pato existente = findById(id);
+        existente.setNome(dto.getNome());
+        existente.setPataMae(dto.getPataMaeId() != null ? findById(dto.getPataMaeId()) : null);
+        return patoRepository.save(existente);
+    }
 
+    public void delete(UUID id) {
+        Pato pato = findById(id);
+        if (pato.isVendido()) {
+            throw new RuntimeException("Não é possível excluir um pato já vendido");
+        }
+        patoRepository.delete(pato);
+    }
 }

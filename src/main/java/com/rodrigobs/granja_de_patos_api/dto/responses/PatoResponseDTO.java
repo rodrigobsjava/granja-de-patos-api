@@ -15,4 +15,6 @@ public class PatoResponseDTO {
 	private UUID id;
 	private String nome;
 	private UUID pataMaeId;
+	private boolean vendido;
+    private double preco;
 }

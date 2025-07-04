@@ -39,4 +39,16 @@ public class Pato {
 
 	@OneToMany(mappedBy = "pataMae")
 	public Set<Pato> filhos = new HashSet<>();
+
+	@Column(name = "vendido", nullable = false)
+	private boolean vendido = false;
+	
+	public double getPreco() {
+	    int qtdFilhos = filhos != null ? filhos.size() : 0;
+	    if (qtdFilhos == 0) return 70.0;
+	    if (qtdFilhos == 1) return 50.0;
+	    if (qtdFilhos == 2) return 25.0;
+	    return 25.0;
+	}
+
 }

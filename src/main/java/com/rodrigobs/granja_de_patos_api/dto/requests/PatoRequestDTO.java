@@ -19,4 +19,5 @@ public class PatoRequestDTO {
 	@Size(min = 2, message = "Nome do pato deve ter pelo menos 2 caracteres")
 	private String nome;
 	private UUID pataMaeId;
+	private boolean vendido;
 }

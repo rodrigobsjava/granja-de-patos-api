@@ -6,38 +6,74 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.rodrigobs.granja_de_patos_api.exception.BusinessException;
+import com.rodrigobs.granja_de_patos_api.exception.NotFoundException;
 import com.rodrigobs.granja_de_patos_api.model.Vendedor;
+import com.rodrigobs.granja_de_patos_api.repository.VendaRepository;
 import com.rodrigobs.granja_de_patos_api.repository.VendedorRepository;
 
 @Service
 public class VendedorService {
+
 	@Autowired
 	private VendedorRepository vendedorRepository;
+
+	@Autowired
+	private VendaRepository vendaRepository;
 
 	public List<Vendedor> findAll() {
 		return vendedorRepository.findAll();
 	}
 
 	public Vendedor findById(UUID id) {
-		return vendedorRepository.findById(id).orElseThrow(() -> new RuntimeException("Vendedor não encontrado"));
+		return buscarOuFalhar(id);
 	}
 
 	public Vendedor create(Vendedor vendedor) {
+		validarDuplicidadeCpfMatricula(vendedor.getCpf(), vendedor.getMatricula());
 		return vendedorRepository.save(vendedor);
 	}
 
 	public Vendedor update(UUID id, Vendedor vendedorAtualizado) {
-		Vendedor existente = findById(id);
+		Vendedor existente = buscarOuFalhar(id);
+
+		if (!existente.getCpf().equals(vendedorAtualizado.getCpf())
+				&& vendedorRepository.existsByCpf(vendedorAtualizado.getCpf())) {
+			throw new BusinessException("Outro vendedor já utiliza este CPF");
+		}
+
+		if (!existente.getMatricula().equals(vendedorAtualizado.getMatricula())
+				&& vendedorRepository.existsByMatricula(vendedorAtualizado.getMatricula())) {
+			throw new BusinessException("Outro vendedor já utiliza esta matrícula");
+		}
+
 		existente.setNome(vendedorAtualizado.getNome());
 		existente.setCpf(vendedorAtualizado.getCpf());
 		existente.setMatricula(vendedorAtualizado.getMatricula());
+
 		return vendedorRepository.save(existente);
 	}
 
 	public void delete(UUID id) {
-		if (!vendedorRepository.existsById(id)) {
-			throw new RuntimeException("Vendedor não encontrado");
+		Vendedor vendedor = buscarOuFalhar(id);
+
+		if (vendaRepository.existsByVendedorId(vendedor.getId())) {
+			throw new BusinessException("Não é possível excluir vendedor com vendas registradas");
 		}
+
 		vendedorRepository.deleteById(id);
+	}
+
+	private void validarDuplicidadeCpfMatricula(String cpf, String matricula) {
+		if (vendedorRepository.existsByCpf(cpf)) {
+			throw new BusinessException("CPF já cadastrado");
+		}
+		if (vendedorRepository.existsByMatricula(matricula)) {
+			throw new BusinessException("Matrícula já cadastrada");
+		}
+	}
+
+	private Vendedor buscarOuFalhar(UUID id) {
+		return vendedorRepository.findById(id).orElseThrow(() -> new NotFoundException("Vendedor não encontrado"));
 	}
 }
