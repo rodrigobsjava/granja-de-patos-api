@@ -22,9 +22,9 @@ CREATE TABLE pato (
     id UUID PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     nome_mae VARCHAR(100),
-    pato_mae_id UUID,
+    pata_mae_id UUID,
     vendido BOOLEAN NOT NULL DEFAULT FALSE,
-    CONSTRAINT fk_pato_mae FOREIGN KEY (pato_mae_id) REFERENCES pato(id)
+    CONSTRAINT fk_pata_mae FOREIGN KEY (pata_mae_id) REFERENCES pato(id)
 );
 
 
