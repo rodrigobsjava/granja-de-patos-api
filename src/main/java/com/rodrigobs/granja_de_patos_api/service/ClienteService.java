@@ -24,7 +24,7 @@ public class ClienteService {
 	}
 
 	public ClienteResponseDTO findById(UUID id) {
-		return mapToDTO(buscarOuFalhar(id));
+		return mapToDTO(findEntityById(id));
 	}
 
 	public ClienteResponseDTO create(ClienteRequestDTO dto) {
@@ -33,7 +33,7 @@ public class ClienteService {
 	}
 
 	public ClienteResponseDTO update(UUID id, ClienteRequestDTO dto) {
-		Cliente cliente = buscarOuFalhar(id);
+		Cliente cliente = findEntityById(id);
 		cliente.setNome(dto.getNome());
 		cliente.setElegivelDesconto(dto.isElegivelDesconto());
 		return mapToDTO(clienteRepository.save(cliente));
@@ -54,10 +54,6 @@ public class ClienteService {
 		return clienteRepository.findByNomeContainingIgnoreCase(nome, pageable).map(this::mapToDTO);
 	}
 
-	private Cliente buscarOuFalhar(UUID id) {
-		return clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Cliente não encontrado"));
-	}
-
 	private ClienteResponseDTO mapToDTO(Cliente cliente) {
 		return ClienteResponseDTO.builder().id(cliente.getId()).nome(cliente.getNome())
 				.elegivelDesconto(cliente.isElegivelDesconto()).build();
@@ -65,5 +61,13 @@ public class ClienteService {
 
 	public Cliente findEntityById(UUID id) {
 		return clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Cliente não encontrado"));
+	}
+
+	public ClienteResponseDTO toResponseDTO(Cliente cliente) {
+		if (cliente == null)
+			return null;
+
+		return ClienteResponseDTO.builder().id(cliente.getId()).nome(cliente.getNome())
+				.elegivelDesconto(cliente.isElegivelDesconto()).build();
 	}
 }

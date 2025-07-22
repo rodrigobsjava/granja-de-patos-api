@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.rodrigobs.granja_de_patos_api.dto.requests.VendaRequestDTO;
+import com.rodrigobs.granja_de_patos_api.dto.responses.VendaResponseDTO;
 import com.rodrigobs.granja_de_patos_api.exception.BusinessException;
 import com.rodrigobs.granja_de_patos_api.exception.NotFoundException;
 import com.rodrigobs.granja_de_patos_api.model.Cliente;
@@ -38,11 +39,13 @@ public class VendaService {
 	}
 
 	public Venda findById(UUID id) {
-		return vendaRepository.findById(id).orElseThrow(() -> new NotFoundException("Venda não encontrada"));
+		return vendaRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Venda não encontrada com ID: " + id));
 	}
 
 	public Venda create(VendaRequestDTO dto) {
 		Venda novaVenda = construirVenda(dto, true);
+		marcarPatosComoVendidos(novaVenda.getPatos());
 		return vendaRepository.save(novaVenda);
 	}
 
@@ -67,29 +70,25 @@ public class VendaService {
 
 		Set<Pato> patos = carregarPatosValidados(dto.getPatoIds(), isNovaVenda);
 
+		double valorTotal = calculaValorTotal(patos);
+
+		if (cliente.isElegivelDesconto()) {
+			valorTotal *= 0.8;
+		}
+
 		Venda venda = new Venda();
 		venda.setCliente(cliente);
 		venda.setVendedor(vendedor);
 		venda.setPatos(patos);
 		venda.setData(LocalDateTime.now());
-
-		double valorTotal = calculaValorTotal(patos);
-		if (cliente.isElegivelDesconto()) {
-			valorTotal *= 0.8; // Aplica 20% de desconto
-		}
-
 		venda.setValorTotal(valorTotal);
-
-		if (isNovaVenda) {
-			marcarPatosComoVendidos(patos);
-		}
 
 		return venda;
 	}
 
 	private Set<Pato> carregarPatosValidados(List<UUID> patoIds, boolean verificarVenda) {
 		if (patoIds == null || patoIds.isEmpty()) {
-			throw new BusinessException("Deve haver pelo menos um pato na venda");
+			throw new BusinessException("A venda deve conter pelo menos um pato");
 		}
 
 		return patoIds.stream().map(id -> {
@@ -104,13 +103,20 @@ public class VendaService {
 	}
 
 	private void marcarPatosComoVendidos(Set<Pato> patos) {
-		patos.forEach(p -> {
-			p.setVendido(true);
-			patoService.save(p); // ou create(p), conforme sua implementação
-		});
+		for (Pato pato : patos) {
+			pato.setVendido(true);
+			patoService.save(pato);
+		}
 	}
 
 	private double calculaValorTotal(Set<Pato> patos) {
 		return patos.stream().mapToDouble(Pato::getPreco).sum();
+	}
+
+	public VendaResponseDTO toResponseDTO(Venda venda) {
+		return VendaResponseDTO.builder().id(venda.getId()).dataVenda(venda.getData()).valorTotal(venda.getValorTotal())
+				.cliente(clienteService.toResponseDTO(venda.getCliente()))
+				.vendedor(vendedorService.toResponseDTO(venda.getVendedor()))
+				.patos(venda.getPatos().stream().map(patoService::toResponseDTO).collect(Collectors.toList())).build();
 	}
 }

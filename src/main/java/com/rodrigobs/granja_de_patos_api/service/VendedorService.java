@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.rodrigobs.granja_de_patos_api.dto.responses.VendedorResponseDTO;
 import com.rodrigobs.granja_de_patos_api.exception.BusinessException;
 import com.rodrigobs.granja_de_patos_api.exception.NotFoundException;
 import com.rodrigobs.granja_de_patos_api.model.Vendedor;
@@ -75,5 +76,13 @@ public class VendedorService {
 
 	private Vendedor buscarOuFalhar(UUID id) {
 		return vendedorRepository.findById(id).orElseThrow(() -> new NotFoundException("Vendedor não encontrado"));
+	}
+
+	public VendedorResponseDTO toResponseDTO(Vendedor vendedor) {
+		if (vendedor == null)
+			return null;
+
+		return VendedorResponseDTO.builder().id(vendedor.getId()).nome(vendedor.getNome()).cpf(vendedor.getCpf())
+				.matricula(vendedor.getMatricula()).build();
 	}
 }
