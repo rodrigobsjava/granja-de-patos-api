@@ -6,11 +6,20 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.rodrigobs.granja_de_patos_api.dto.requests.VendaRequestDTO;
 import com.rodrigobs.granja_de_patos_api.dto.responses.VendaResponseDTO;
+import com.rodrigobs.granja_de_patos_api.dto.responses.VendedorResponseDTO;
 import com.rodrigobs.granja_de_patos_api.model.Venda;
+import com.rodrigobs.granja_de_patos_api.model.Vendedor;
 import com.rodrigobs.granja_de_patos_api.service.VendaService;
 
 import jakarta.validation.Valid;
@@ -53,4 +62,5 @@ public class VendaController {
 		vendaService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
+
 }

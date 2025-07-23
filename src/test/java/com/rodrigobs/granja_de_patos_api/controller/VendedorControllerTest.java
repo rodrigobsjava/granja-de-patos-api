@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rodrigobs.granja_de_patos_api.dto.requests.VendedorRequestDTO;
+import com.rodrigobs.granja_de_patos_api.dto.responses.VendedorResponseDTO;
 import com.rodrigobs.granja_de_patos_api.model.Vendedor;
 import com.rodrigobs.granja_de_patos_api.service.VendedorService;
 
@@ -45,11 +46,21 @@ class VendedorControllerTest {
         requestDTO = new VendedorRequestDTO("João da Silva", "39053344705", "MAT100"); // CPF válido
 
         vendedor = new Vendedor(id, "João da Silva", "39053344705", "MAT100");
+        VendedorResponseDTO vendedorResponseDTO = new VendedorResponseDTO(id, "", "", "");
+        
     }
 
     @Test
     void deveListarTodosOsVendedores() throws Exception {
-        when(vendedorService.findAll()).thenReturn(List.of(vendedor));
+    	List<VendedorResponseDTO> listaDTO = List.of(
+    		    VendedorResponseDTO.builder()
+    		        .id(UUID.randomUUID())
+    		        .nome("João da Silva")
+    		        .cpf("39053344705")
+    		        .matricula("MAT100")
+    		        .build()
+    		);
+        when(vendedorService.findAll()).thenReturn(listaDTO);
 
         mockMvc.perform(get("/vendedores"))
                 .andExpect(status().isOk())

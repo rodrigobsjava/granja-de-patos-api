@@ -30,7 +30,7 @@ public class VendedorController {
 
 	@GetMapping
 	public ResponseEntity<List<VendedorResponseDTO>> listarTodos() {
-		return ResponseEntity.ok(vendedorService.findAll().stream().map(this::toResponseDTO).toList());
+		return ResponseEntity.ok(vendedorService.findAll());
 	}
 
 	@GetMapping("/{id}")

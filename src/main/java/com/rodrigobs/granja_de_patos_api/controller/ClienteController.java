@@ -34,8 +34,6 @@ public class ClienteController {
 
 	@GetMapping
 	public List<ClienteResponseDTO> listarTodos() {
-		List<Cliente> clientes = clienteService.findAll().stream()
-				.map(dto -> clienteService.findEntityById(dto.getId())).collect(Collectors.toList());
 		return clienteService.findAll();
 	}
 
