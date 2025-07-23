@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.rodrigobs.granja_de_patos_api.dto.responses.VendedorResponseDTO;
 import com.rodrigobs.granja_de_patos_api.exception.BusinessException;
 import com.rodrigobs.granja_de_patos_api.exception.NotFoundException;
 import com.rodrigobs.granja_de_patos_api.model.Vendedor;
@@ -50,7 +51,7 @@ public class VendedorServiceTest {
     void testFindAll() {
         when(vendedorRepository.findAll()).thenReturn(List.of(vendedor));
 
-        List<Vendedor> result = vendedorService.findAll();
+        List<VendedorResponseDTO> result = vendedorService.findAll();
 
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
