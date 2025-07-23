@@ -10,4 +10,7 @@ public interface VendedorRepository extends JpaRepository<Vendedor, UUID> {
 	boolean existsByCpf(String cpf);
 
 	boolean existsByMatricula(String matricula);
+
+
+
 }

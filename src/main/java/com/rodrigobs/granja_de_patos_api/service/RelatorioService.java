@@ -46,4 +46,8 @@ public class RelatorioService {
             return new ByteArrayInputStream(out.toByteArray());
         }
     }
+    
+    public List<Object[]> gerarRankingVendedores() {
+        return vendaRepository.gerarRankingVendedores();
+    }
 }

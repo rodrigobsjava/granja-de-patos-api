@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.rodrigobs.granja_de_patos_api.dto.responses.RankingVendedorDTO;
 import com.rodrigobs.granja_de_patos_api.dto.responses.VendedorResponseDTO;
 import com.rodrigobs.granja_de_patos_api.exception.BusinessException;
 import com.rodrigobs.granja_de_patos_api.exception.NotFoundException;
@@ -23,10 +24,8 @@ public class VendedorService {
 	private VendaRepository vendaRepository;
 
 	public List<VendedorResponseDTO> findAll() {
-        return vendedorRepository.findAll().stream()
-                .map(this::toResponseDTO)
-                .toList();
-    }
+		return vendedorRepository.findAll().stream().map(this::toResponseDTO).toList();
+	}
 
 	public Vendedor findById(UUID id) {
 		return buscarOuFalhar(id);
@@ -65,6 +64,22 @@ public class VendedorService {
 		}
 
 		vendedorRepository.deleteById(id);
+	}
+
+	public List<RankingVendedorDTO> gerarRankingVendedores() {
+		List<Object[]> resultados = vendaRepository.gerarRankingVendedores();
+		return resultados.stream().map(objVendedor -> {
+			UUID vendedorId = (UUID) objVendedor[0];
+			long quantidadeVendas = (long) objVendedor[1];
+			double valorTotal = (double) objVendedor[2];
+
+			Vendedor vendedor = buscarOuFalhar(vendedorId);
+			return RankingVendedorDTO.builder()
+
+					.vendedorId(vendedorId).nome(vendedor.getNome()).quantidadeVendas(quantidadeVendas)
+					.valorTotalVendido(valorTotal).build();
+		}).toList();
+
 	}
 
 	private void validarDuplicidadeCpfMatricula(String cpf, String matricula) {

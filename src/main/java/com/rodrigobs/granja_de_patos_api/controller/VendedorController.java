@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rodrigobs.granja_de_patos_api.dto.requests.VendedorRequestDTO;
+import com.rodrigobs.granja_de_patos_api.dto.responses.RankingVendedorDTO;
 import com.rodrigobs.granja_de_patos_api.dto.responses.VendedorResponseDTO;
 import com.rodrigobs.granja_de_patos_api.model.Vendedor;
 import com.rodrigobs.granja_de_patos_api.service.VendedorService;
@@ -56,6 +57,11 @@ public class VendedorController {
 	public ResponseEntity<Void> deletar(@PathVariable UUID id) {
 		vendedorService.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/ranking")
+	public ResponseEntity<List<RankingVendedorDTO>> listarRanking() {
+		return ResponseEntity.ok(vendedorService.gerarRankingVendedores());
 	}
 
 	private Vendedor toEntity(VendedorRequestDTO dto) {
