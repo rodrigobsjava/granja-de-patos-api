@@ -27,4 +27,7 @@ public interface VendaRepository extends JpaRepository<Venda, UUID> {
 	@Query("SELECT SUM(v.valorTotal) FROM Venda v WHERE v.vendedor.id = :vendedorId")
 	Optional<Double> sumValorTotalByVendedorId(@Param("vendedorId") UUID vendedorId);
 
+	@Query("SELECT v FROM Venda v JOIN v.patos p WHERE p.id = :patoId")
+	Venda findByPatos_Id(@Param("patoId") UUID patoId);
+
 }

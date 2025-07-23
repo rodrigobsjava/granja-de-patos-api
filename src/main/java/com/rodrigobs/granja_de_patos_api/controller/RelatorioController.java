@@ -40,6 +40,21 @@ public class RelatorioController {
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(new InputStreamResource(in));
     }
+    
+    // Relatório de gerenciamento de patos em Excel
+    @GetMapping("/patos/excel")
+    public ResponseEntity<InputStreamResource> gerarRelatorioPatosExcel() throws IOException {
+        ByteArrayInputStream in = relatorioService.gerarRelatorioGerenciamentoPatosExcel();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=gerenciamento-patos.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(new InputStreamResource(in));
+    }
+
 
     // Ranking de vendedores
     @GetMapping("/ranking-vendedores")
