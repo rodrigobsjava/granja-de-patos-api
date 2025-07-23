@@ -22,9 +22,11 @@ public class VendedorService {
 	@Autowired
 	private VendaRepository vendaRepository;
 
-	public List<Vendedor> findAll() {
-		return vendedorRepository.findAll();
-	}
+	public List<VendedorResponseDTO> findAll() {
+        return vendedorRepository.findAll().stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
 
 	public Vendedor findById(UUID id) {
 		return buscarOuFalhar(id);
