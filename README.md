@@ -262,8 +262,10 @@ O desafio consistia em construir uma API baseada nos requisitos descritos no doc
 ## Autor
 
 Desenvolvido por [Rodrigo Barbosa De Sousa](https://www.linkedin.com/in/rodrigobsjava/)  
-Email - rodrigobarbosadesousa5608@gmail.com
-GitHub - [rodrigobsjava](https://github.com/rodrigobsjava)
+
+- Email - rodrigobarbosadesousa5608@gmail.com
+
+- GitHub - [rodrigobsjava](https://github.com/rodrigobsjava)
 
 ---
 
